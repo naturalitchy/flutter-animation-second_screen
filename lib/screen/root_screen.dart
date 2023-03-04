@@ -19,6 +19,22 @@ class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin {
     // 이유는, Tab은 처음 띄우자 마자 한번만 나오면 되지 않느냐. 따라서 추후 또 생성할 필요가 없다.
     controller = TabController(length: 2, vsync: this);
 
+    // controller 상태가 변경될 때 마다 tabListener function execute.
+    controller!.addListener(tabListener);
+  }
+
+  tabListener() {
+    setState(() {
+
+    });
+  }
+
+  //
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    controller!.removeListener(tabListener);
   }
 
   @override
@@ -39,10 +55,59 @@ class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin {
   }
 
   List<Widget> renderChildren() {
-    return [];
+    return [
+      Container(
+        child: Center(
+          child: Text(
+            'Tab1',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+
+      Container(
+        child: Center(
+          child: Text(
+            'Tab2',
+            style: TextStyle(
+              color: Colors.red,
+            ),
+          ),
+        ),
+      ),
+      Container(
+        child: Center(
+          child: Text(
+            'Tab3',
+            style: TextStyle(
+              color: Colors.blue,
+            ),
+          ),
+        ),
+      ),
+
+    ];
   }
 
   BottomNavigationBar renderBottomNavigation() {
-    return BottomNavigationBar(items: []);
+    return BottomNavigationBar(
+      items: [
+        BottomNavigationBarItem(
+          icon: Icon(
+            Icons.edgesensor_high_outlined,
+          ),
+          label: 'dice label',
+        ),
+
+        BottomNavigationBarItem(
+          icon: Icon(
+            Icons.settings,
+          ),
+          label: 'setting label',
+        ),
+      ],
+    );
   }
 }
