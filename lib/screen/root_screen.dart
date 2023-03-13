@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ramdom_dice/screen/home_screen.dart';
 
 class RootScreen extends StatefulWidget {
   @override
@@ -25,11 +26,11 @@ class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin {
 
   tabListener() {
     setState(() {
-
+      print('tabListener function execute!!!!!!!');
     });
   }
 
-  //
+  // 리스너에 등록한 함수를 다시 등록취소.
   @override
   void dispose() {
     // TODO: implement dispose
@@ -56,16 +57,7 @@ class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin {
 
   List<Widget> renderChildren() {
     return [
-      Container(
-        child: Center(
-          child: Text(
-            'Tab1',
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
+      HomeScreen(number: 3),
 
       Container(
         child: Center(
@@ -77,22 +69,24 @@ class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin {
           ),
         ),
       ),
-      Container(
-        child: Center(
-          child: Text(
-            'Tab3',
-            style: TextStyle(
-              color: Colors.blue,
-            ),
-          ),
-        ),
-      ),
 
     ];
   }
 
   BottomNavigationBar renderBottomNavigation() {
     return BottomNavigationBar(
+
+      // index of the current screen
+      currentIndex: controller!.index,
+
+      // execute when tab is selected
+      onTap: (int index) {
+        setState(() {
+          controller!.animateTo(index);
+          print(index);
+        });
+      },
+
       items: [
         BottomNavigationBarItem(
           icon: Icon(
