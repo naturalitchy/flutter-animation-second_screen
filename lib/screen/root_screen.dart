@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ramdom_dice/screen/home_screen.dart';
+import 'package:ramdom_dice/screen/setting_screen.dart';
+import 'dart:math';
+import 'package:shake/shake.dart';
 
 class RootScreen extends StatefulWidget {
   @override
@@ -11,6 +14,9 @@ class RootScreen extends StatefulWidget {
 class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin {
 // class _RootScreenState extends State<RootScreen> {
   TabController? controller;          // define TabController
+  double threshold = 5.5;             // threshold의 기본값 설정.
+  int number = 1;                     // random dice number.
+  ShakeDetector? shakeDetector;
 
   @override
   void initState() {
@@ -22,6 +28,20 @@ class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin {
 
     // controller 상태가 변경될 때 마다 tabListener function execute.
     controller!.addListener(tabListener);
+
+    shakeDetector = ShakeDetector.autoStart(
+      onPhoneShake: onPhoneShake,
+      shakeThresholdGravity: threshold,         // 흔들기 민감도.
+      shakeSlopTimeMS: 100,                     // 감지 주기 (ms)
+    );
+  }
+
+  void onPhoneShake() {
+    final rand = new Random();
+
+    setState(() {
+      number = rand.nextInt(5) + 1;
+    });
   }
 
   tabListener() {
@@ -36,6 +56,7 @@ class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin {
     // TODO: implement dispose
     super.dispose();
     controller!.removeListener(tabListener);
+    shakeDetector!.stopListening();
   }
 
   @override
@@ -57,20 +78,21 @@ class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin {
 
   List<Widget> renderChildren() {
     return [
-      HomeScreen(number: 3),
-
-      Container(
-        child: Center(
-          child: Text(
-            'Tab2',
-            style: TextStyle(
-              color: Colors.red,
-            ),
-          ),
-        ),
+      HomeScreen(
+        number: number
       ),
-
+      SettingScreen(
+        threshold: threshold,
+        onThresholdChange: onThresholdChange,
+      ),
     ];
+  }
+
+  void onThresholdChange(double val) {
+    // build 재 실행을 위해 setState.
+    setState(() {
+      threshold = val;
+    });
   }
 
   BottomNavigationBar renderBottomNavigation() {
